@@ -53,6 +53,7 @@ public class Hero {
             dy=0;
     }
 
+
         ypos = ypos +dy;
         xpos = xpos+dx;
         rec = new Rectangle(xpos,ypos,width,height);

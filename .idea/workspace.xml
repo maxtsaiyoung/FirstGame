@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="4b647e68-2976-465a-926a-95b1c843ba20" name="Changes" comment="Simple First Game">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Hero.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Hero.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MyFirstGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MyFirstGame.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -65,7 +66,14 @@
       <option name="project" value="LOCAL" />
       <updated>1712796701956</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Simple First Game">
+      <created>1713790723899</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1713790723899</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

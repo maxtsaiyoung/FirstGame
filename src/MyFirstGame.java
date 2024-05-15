@@ -93,11 +93,17 @@ import javax.swing.JPanel;
         public boolean astro24intersectingball;
         public boolean ballintersectinggoal;
         public boolean ballintersectinggoal2;
-
+        public boolean farLeftTopBoundary=false;
+        public boolean farLeftBottomBoundary;
         public int leftGoalCount = 0;
-
         public int rightGoalCount = 0;
+        public boolean leftWon = false;
+        public boolean rightWon = false;
+
         public Image Background;
+        public Image startScreenPic;
+        public Image rightWinsPic;
+        public Image leftWinsPic;
         private int KeyCode;
 
 
@@ -119,17 +125,17 @@ import javax.swing.JPanel;
             //for each object that has a picture, load in images as well
 
             /**  Step 3: Construct a specific Hero**/
-            astro = new Hero(800, 150, -10, 13, 70, 100);
-            astro11 = new Hero(800, 400, -10, 13, 70, 100);
-            astro12 = new Hero(600, 100, -10, 13, 70, 100);
-            astro13 = new Hero(600, 300, -10, 13, 70, 100);
-            astro14 = new Hero(600, 500, -10, 13, 70, 100);
-            astro2 = new Hero(50, 150, -10, 13, 70, 100);
-            astro21 = new Hero(50, 400, -10, 13, 70, 100);
-            astro22 = new Hero(250, 100, -10, 13, 70, 100);
-            astro23 = new Hero(250, 300, -10, 13, 70, 100);
-            astro24 = new Hero(250, 500, -10, 13, 70, 100);
-            ball = new Hero(200, 200, 8, 8, 35, 35);
+            astro = new Hero(800, 150, -10, 13, 35, 50);
+            astro11 = new Hero(800, 400, -10, 13, 35, 50);
+            astro12 = new Hero(600, 100, -10, 13, 35, 50);
+            astro13 = new Hero(600, 300, -10, 13, 35, 50);
+            astro14 = new Hero(600, 500, -10, 13, 35, 50);
+            astro2 = new Hero(50, 150, -10, 13, 35, 50);
+            astro21 = new Hero(50, 400, -10, 13, 35, 50);
+            astro22 = new Hero(250, 100, -10, 13, 35, 50);
+            astro23 = new Hero(250, 300, -10, 13, 35, 50);
+            astro24 = new Hero(250, 500, -10, 13, 35, 50);
+            ball = new Hero(200, 200, 8, 8, 20, 20);
             goal = new Hero(0, 350, 0, 0, 1, 80);
             goal2 = new Hero(1000, 350, 0, 0, 1, 80);
 
@@ -138,9 +144,12 @@ import javax.swing.JPanel;
             astroPic = Toolkit.getDefaultToolkit().getImage("messi.png");
             astro2Pic = Toolkit.getDefaultToolkit().getImage("mbappe.png");
             Background = Toolkit.getDefaultToolkit().getImage("soccerField.png");
+            startScreenPic = Toolkit.getDefaultToolkit().getImage("startScreenPic.png");
             ballPic = Toolkit.getDefaultToolkit().getImage("soccerBall.png");
             goalPic = Toolkit.getDefaultToolkit().getImage("paddle.png");
             goalPic2 = Toolkit.getDefaultToolkit().getImage("paddle.png");
+            leftWinsPic = Toolkit.getDefaultToolkit().getImage("LeftTeamWins.png");
+            rightWinsPic = Toolkit.getDefaultToolkit().getImage("RightTeamWins.png");
 
 
             astro.printInfo();
@@ -166,8 +175,10 @@ import javax.swing.JPanel;
             while (true) {
                 moveThings();  //move all the game objects
                 collisions();//check for rectangle intersections
+                boundary();
                 render();  // paint the graphics
                 pause(20); // sleep for 20 ms
+
 
             }
         }
@@ -177,7 +188,9 @@ import javax.swing.JPanel;
             Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
             g.clearRect(0, 0, WIDTH, HEIGHT);
             if (startScreen == true) {
-                g.drawString("press space bar to start", 400, 300);
+                g.drawImage(startScreenPic,0,0,1000,705,null);
+                g.drawString("press space bar to start", 420, 385);
+
                 //g.drawImage();
             }
 
@@ -186,27 +199,47 @@ import javax.swing.JPanel;
                 //draw the image of your objects below:
                 /**Step 5 draw the image of your object to the screen**/
                 g.drawImage(Background, 0, 0, WIDTH, HEIGHT, null);
-                g.drawImage(astroPic, astro.xpos, astro.ypos, 50, 70, null);
-                g.drawImage(astroPic, astro11.xpos, astro11.ypos, 50, 70, null);
-                g.drawImage(astroPic, astro12.xpos, astro12.ypos, 50, 70, null);
-                g.drawImage(astroPic, astro13.xpos, astro13.ypos, 50, 70, null);
-                g.drawImage(astroPic, astro14.xpos, astro14.ypos, 50, 70, null);
+
+                g.drawImage(astroPic, astro.xpos, astro.ypos, 35, 50, null);
+                g.drawImage(astroPic, astro11.xpos, astro11.ypos, 35, 50, null);
+                g.drawImage(astroPic, astro12.xpos, astro12.ypos, 35, 50, null);
+                g.drawImage(astroPic, astro13.xpos, astro13.ypos, 35, 50, null);
+                g.drawImage(astroPic, astro14.xpos, astro14.ypos, 35, 50, null);
                 g.drawImage(ballPic, ball.xpos, ball.ypos, 35, 35, null);
-                g.drawImage(astro2Pic, astro2.xpos, astro2.ypos, 50, 70, null);
-                g.drawImage(astro2Pic, astro21.xpos, astro21.ypos, 50, 70, null);
-                g.drawImage(astro2Pic, astro22.xpos, astro22.ypos, 50, 70, null);
-                g.drawImage(astro2Pic, astro23.xpos, astro23.ypos, 50, 70, null);
-                g.drawImage(astro2Pic, astro24.xpos, astro24.ypos, 50, 70, null);
+                g.drawImage(astro2Pic, astro2.xpos, astro2.ypos, 35, 50, null);
+                g.drawImage(astro2Pic, astro21.xpos, astro21.ypos, 35, 50, null);
+                g.drawImage(astro2Pic, astro22.xpos, astro22.ypos, 35, 50, null);
+                g.drawImage(astro2Pic, astro23.xpos, astro23.ypos, 35, 50, null);
+                g.drawImage(astro2Pic, astro24.xpos, astro24.ypos, 35, 50, null);
 
                 g.drawImage(goalPic, goal.xpos, goal.ypos, 1, 80, null);
                 g.drawImage(goalPic2, goal2.xpos, goal2.ypos, 1, 80, null);
+                g.drawString("Score: "+rightGoalCount,200,30);
+                g.drawString("Score: "+leftGoalCount,700,30);
+
 
             }
 
-            if (gameOver == true) {
+            if(rightGoalCount==5){
+                gameOver=true;
+                rightWon = true;
+            }
+            if(leftGoalCount==5){
+                gameOver = true;
+                leftWon = true;
+            }
+            if (gameOver == true&&leftWon==true) {
                 //paint game over image to the screen
-                g.drawString("game over", 300, 400);
+                isPlaying=false;
+                g.drawImage(leftWinsPic,0,0,1000,705,null);
+
             }
+            if (gameOver == true&&rightWon==true) {
+                //paint game over image to the screen
+                isPlaying=false;
+                g.drawImage(rightWinsPic,0,0,1000,705,null);
+            }
+
             //dispose the images each time(this allows for the illusion of movement).
             g.dispose();
 
@@ -215,7 +248,6 @@ import javax.swing.JPanel;
 
         public void moveThings() {
             //call the move() method code from your object class
-            //astro.bouncingMove();
             astro.move();
             astro11.move();
             astro12.move();
@@ -232,6 +264,13 @@ import javax.swing.JPanel;
 
 
         }
+        public void boundary(){
+            if(astro21.ypos>650){
+                farLeftTopBoundary=true;
+            }else{
+                farLeftTopBoundary=false;
+            }
+        }
 
         public void collisions() {
             if (astro.rec.intersects(ball.rec) && astrointersectingball == false) {
@@ -239,75 +278,95 @@ import javax.swing.JPanel;
                 System.out.println("ouch");
                 ball.dx = -ball.dx;
             }
-            astrointersectingball = false;
-
+            if(!astro.rec.intersects(ball.rec)) {
+                astrointersectingball = false;
+            }
             if (astro2.rec.intersects(ball.rec) && astro2intersectingball == false) {
                 astro2intersectingball = true;
                 System.out.println("ow");
                 ball.dx = -ball.dx;
             }
-            astro2intersectingball = false;
-
+            if(!astro2.rec.intersects(ball.rec)) {
+                astro2intersectingball = false;
+            }
             if (astro11.rec.intersects(ball.rec) && astro11intersectingball == false) {
                 astro11intersectingball = true;
                 System.out.println("oof");
                 ball.dx = -ball.dx;
             }
-            astro11intersectingball = false;
+            if(!astro11.rec.intersects(ball.rec)) {
+                astro11intersectingball = false;
+            }
 
             if (astro12.rec.intersects(ball.rec) && astro12intersectingball == false) {
                 astro12intersectingball = true;
                 System.out.println("oof");
                 ball.dx = -ball.dx;
             }
-            astro12intersectingball = false;
+            if(!astro12.rec.intersects(ball.rec)) {
+                astro12intersectingball = false;
+            }
 
             if (astro13.rec.intersects(ball.rec) && astro13intersectingball == false) {
                 astro13intersectingball = true;
                 System.out.println("oof");
                 ball.dx = -ball.dx;
             }
-            astro13intersectingball = false;
+            if(!astro13.rec.intersects(ball.rec)) {
+                astro13intersectingball = false;
+            }
 
             if (astro14.rec.intersects(ball.rec) && astro14intersectingball == false) {
                 astro14intersectingball = true;
                 System.out.println("oof");
                 ball.dx = -ball.dx;
             }
-            astro14intersectingball = false;
+            if(!astro14.rec.intersects(ball.rec)) {
+                astro14intersectingball = false;
+            }
 
             if (astro21.rec.intersects(ball.rec) && astro21intersectingball == false) {
                 astro21intersectingball = true;
                 System.out.println("oof");
                 ball.dx = -ball.dx;
             }
-            astro21intersectingball = false;
+            if(!astro21.rec.intersects(ball.rec)) {
+                astro21intersectingball = false;
+            }
 
             if (astro22.rec.intersects(ball.rec) && astro22intersectingball == false) {
                 astro22intersectingball = true;
                 System.out.println("oof");
                 ball.dx = -ball.dx;
             }
-            astro22intersectingball = false;
+            if(!astro22.rec.intersects(ball.rec)) {
+                astro22intersectingball = false;
+            }
 
             if (astro23.rec.intersects(ball.rec) && astro23intersectingball == false) {
                 astro23intersectingball = true;
                 System.out.println("oof");
                 ball.dx = -ball.dx;
             }
-            astro23intersectingball = false;
+            if(!astro23.rec.intersects(ball.rec)) {
+                astro23intersectingball = false;
+            }
 
             if (astro24.rec.intersects(ball.rec) && astro24intersectingball == false) {
                 astro24intersectingball = true;
                 System.out.println("oof");
                 ball.dx = -ball.dx;
             }
-            astro24intersectingball = false;
+            if(!astro24.rec.intersects(ball.rec)) {
+                astro24intersectingball = false;
+            }
 
             if (ball.rec.intersects(goal.rec) && ballintersectinggoal == false) {
                 ballintersectinggoal = true;
                 System.out.println("owy");
-                leftGoalCount = leftGoalCount+1;
+                leftGoalCount = leftGoalCount + 1;
+                ball.dx=ball.dx+2;
+                ball.dy=ball.dy+2;
 
             }
             ballintersectinggoal = false;
@@ -315,7 +374,9 @@ import javax.swing.JPanel;
             if (ball.rec.intersects(goal2.rec) && ballintersectinggoal2 == false) {
                 ballintersectinggoal2 = true;
                 System.out.println("owwy");
-                rightGoalCount = rightGoalCount+1;
+                rightGoalCount = rightGoalCount + 1;
+                ball.dx=ball.dx+2;
+                ball.dy=ball.dy+2;
 
             }
             ballintersectinggoal2 = false;
@@ -374,18 +435,21 @@ import javax.swing.JPanel;
             System.out.println("Key: " + key + "KeyCode: " + keyCode);
 
             if (keyCode == 65) {
-                astro2.upPressed = true;
-                astro21.upPressed = true;
+              if(farLeftTopBoundary==false) {
+                    System.out.println("top boundary: " +farLeftTopBoundary);
+                    astro2.upPressed = true;
+                    astro21.upPressed = true;
+              }
             }
             if (keyCode == 81) {
                 astro2.downPressed = true;
                 astro21.downPressed = true;
             }
-            if (keyCode == 40) {
+            if (keyCode == 76) {
                 astro.upPressed = true;
                 astro11.upPressed = true;
             }
-            if (keyCode == 38) {
+            if (keyCode == 80) {
                 astro.downPressed = true;
                 astro11.downPressed = true;
             }
@@ -399,46 +463,68 @@ import javax.swing.JPanel;
                 astro23.upPressed = true;
                 astro24.upPressed = true;
             }
-
-            @Override
-            public void keyReleased (KeyEvent e){
-                char key = e.getKeyChar();
-                int keyCode = e.getKeyCode();
-
-                if (keyCode == 32) {
-                    startScreen = false;
-                    isPlaying = true;
-                }
-                if (keyCode == 65) {
-                    astro2.upPressed = false;
-                    astro21.upPressed = false;
-                }
-                if (keyCode == 81) {
-                    astro2.downPressed = false;
-                    astro21.downPressed = false;
-                }
-
-                if (keyCode == 40) {
-                    astro.upPressed = false;
-                    astro11.upPressed = false;
-                }
-                if (keyCode == 38) {
-                    astro.downPressed = false;
-                    astro11.downPressed = false;
-                }
-                if (keyCode == 87) {
-                    astro22.downPressed = false;
-                    astro23.downPressed = false;
-                    astro24.downPressed = false;
-                }
-                if (keyCode == 83) {
-                    astro22.upPressed = false;
-                    astro23.upPressed = false;
-                    astro24.upPressed = false;
-                }
-
+            if (keyCode == 79) {
+                astro12.downPressed = true;
+                astro13.downPressed = true;
+                astro14.downPressed = true;
+            }
+            if (keyCode == 75) {
+                astro12.upPressed = true;
+                astro13.upPressed = true;
+                astro14.upPressed = true;
             }
         }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+            char key = e.getKeyChar();
+            int keyCode = e.getKeyCode();
+
+            if (keyCode == 32) {
+                startScreen = false;
+                isPlaying = true;
+            }
+            if (keyCode == 65) {
+                astro2.upPressed = false;
+                astro21.upPressed = false;
+            }
+            if (keyCode == 81) {
+                astro2.downPressed = false;
+                astro21.downPressed = false;
+            }
+
+            if (keyCode == 76) {
+                astro.upPressed = false;
+                astro11.upPressed = false;
+            }
+            if (keyCode == 80) {
+                astro.downPressed = false;
+                astro11.downPressed = false;
+            }
+            if (keyCode == 87) {
+                astro22.downPressed = false;
+                astro23.downPressed = false;
+                astro24.downPressed = false;
+            }
+            if (keyCode == 83) {
+                astro22.upPressed = false;
+                astro23.upPressed = false;
+                astro24.upPressed = false;
+            }
+            if (keyCode == 79) {
+                astro12.downPressed = false;
+                astro13.downPressed = false;
+                astro14.downPressed = false;
+            }
+            if (keyCode == 75) {
+                astro12.upPressed = false;
+                astro13.upPressed = false;
+                astro14.upPressed = false;
+            }
+
+        }
+    }
+
 
 
 
